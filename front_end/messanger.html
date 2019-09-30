@@ -1,0 +1,223 @@
+<!doctype html>
+<html ng-app="app">
+    <head>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.7/angular.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="messanger.css" />
+        <script src="messanger.js"></script>
+        <script src="toaster.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link href="toaster.css" rel="stylesheet" />
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+      </head>
+      <style>
+       td{
+           padding: 10px;
+       }
+      </style>
+      <body ng-controller="MessangerController" style="margin:2%;overflow-y:hidden;overflow-x:hidden">
+        <toaster-container toaster-options="{'time-out': 2000}"></toaster-container>
+        <div class="container" style="overflow-y:hidden;overflow-x:hidden">
+              <div class="row top_div">
+                  <header>
+                    <i class="fa fa-sign-out" aria-hidden="true" style="margin-right:10px;font-size:36px;float:right;color:white;"></i>
+                    <h2>GoMessaging</h2>
+                  </header>
+              </div>
+              <div class="row row_div">
+                <div id="display_chat_show" ng-show="display_chat_show" class="col-md-4" style=" border-right: 1px solid white;">
+                    <header>
+                        <i ng-click="select_contact()" class="fa fa-address-book-o" style="float:right;margin-top:-3px ;margin-right:10px;font-size:28px;color:#757575"></i>
+                        <h3>CONNECTIONS</h3>
+                    </header>
+                    <div class="col-md-12" style="overflow-y:scroll;overflow-x:hidden;height:500px;border: 2px solid gainsboro;">
+                            <table>
+                                    <tr ng-repeat="chat in Chats" ng-click="open_chat(chat)"class="w3-panel w3-card " ng-attr-id="{{chat.id}}">
+                                        <td id=chat.id ng-show="!chat.Flag" style="width: 90px;"><img ng-src="{{chat.ContactList[0].ContactImage}}" height="50" width="50" style="border-radius: 50%;"></td>
+                                        <td ng-show="!chat.Flag" style="width:460px;font-size: 20;font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;">{{chat.ContactList[0].ContactName}}</td>
+
+                                        <td ng-show="chat.Flag" style="width: 90px;"><img ng-src="{{chat.GroupImage}}" height="50" width="50" style="border-radius: 50%;"></td>
+                                        <td ng-show="chat.Flag"style="width:460px;font-size: 20;font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;">{{chat.GroupName}}</td>
+                                    </tr>
+                                </table>
+                    </div>
+                </div>
+                <div id="select_contact_show" ng-show="select_contact_show" class="col-md-4" style=" border-right: 1px solid white;">
+                        <header>
+                            <i class="fa fa-user-plus" data-toggle="modal" data-target="#modalwindow" style="float:right;margin-top:-3px ;margin-right:10px;font-size:28px;color:#757575"></i>
+                            <h3>Select Contact</h3>
+                        </header>
+                        <div class="col-md-12" style="overflow-y:scroll;overflow-x:hidden;height:500px;border: 2px solid gainsboro;">
+                                <table>
+                                        <tr ng-click="new_group()">
+                                                <td style="width: 90px;"><img ng-src="" height="50" width="50" style="border-radius: 50%;"></td>
+                                                <td style="width:460px;font-size: 20;font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;">New Group</td>                       
+                                        </tr>
+                                        <tr ng-repeat="contact in Contacts">
+                                            <td style="width: 90px;"><img ng-src="{{contact.ContactList[0].ContactImage}}" height="50" width="50" style="border-radius: 50%;"></td>
+                                            <td ng-click="open_chat(contact)" style="width:460px;font-size: 20;font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;">{{contact.ContactList[0].ContactName}}</td>
+                                            <td style="width: 30px;"><i class="fa fa-trash" ng-click="remove_contact(contact)" style="float:right;margin-top:-3px ;margin-right:10px;font-size:24px;color:#757575"></i></td>
+                                        </tr>
+                                    </table> 
+                        </div>
+                </div>
+                <div id="new_group_show" ng-show="new_group_show" class="col-md-4" style=" border-right: 1px solid white;">
+                        <header>
+                                <i ng-click="create_group()" class="fa fa-arrow-circle-o-right" style="float:right;margin-top:-6px ;margin-right:10px;font-size:34px;color:#757575"></i>
+                                <h3>New Group</h3>
+                        </header>
+                        <div class="col-md-12 no_padding" style="overflow-y:scroll;overflow-x:hidden;height:500px;border: 2px solid gainsboro;">
+                            <table>
+                                <tr ng-repeat="member in Members">
+                                        <td style="width: 90px;"><img ng-src="{{member.ContactImage}}" height="50" width="50" style="border-radius: 50%;"></td>
+                                        <td style="width:460px;font-size: 20;font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;">{{member.ContactName}}</td>
+                                    <td style="width: 30px;"><input type="checkbox" ng-value="{{member.ContactName}}"  ng-model="member.Selected" style="width:20px;height:20px;"/></td>
+                                </tr>
+                            </table>
+                        </div>
+                </div>
+                <div id="create_group_show" ng-show="create_group_show" class="col-md-4" style=" border-right: 1px solid white;">
+                        <header>
+                                <i ng-click="create_group_data()" class="fa fa-check-circle" style="float:right;margin-top:-6px ;margin-right:10px;font-size:34px;color:#757575"></i>
+                                <h3>New Group</h3>
+
+                        </header>
+                        <div class="col-md-12 no_padding" style="height:500px;border: 2px solid gainsboro;">
+                            
+                            <table>    
+                                <tr>
+                                        <td>
+                                            <img style="width:70px; height:70px; border-radius: 50%;" ng-src="{{imageSrc}}" />
+                                            <input type="button" style="background: #4CAF50;color: white" class="btn btn-default" id="get_file" value="Upload Image>>" ng-click="file_upload()">
+                                            <input type="file" id="my_file" ng-file-select="onFileSelect($files)" ng-model="imageSrc" accept="image/*">
+                                        </td>
+                                        <td>
+                                            <span>Enter Group Subject....</span>
+                                            <input ng-model="groupName" type="text" maxlength="20">
+                                        </td>
+                                </tr>
+                                <tr ng-repeat="contact in selectedList">
+                                        <td style="width: 90px;"><img ng-src="{{contact.ContactImage}}" height="40" width="40" style="border-radius: 50%;"></td>
+                                        <td style="width:460px;font-size: 20;font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;">{{contact.ContactName}}</td>
+                                    </tr>
+                            </table>
+                        </div>
+                </div>
+                <div ng-show="show_chat" class="col-md-8" style=" border-left: 1px solid white;"> 
+                        <header>
+                            <i ng-show="openChat.GroupId!=''" ng-click="edit_group()" class="fa fa-edit" style="float:right;margin-top:-3px ;margin-right:10px;font-size:28px;color:#757575"></i>
+                            <i ng-show="Blocked && openChat.GroupId==''" ng-click="unblock_contact(openChat)" class="fa fa-unlock-alt" style="float:right;margin-top:-3px ;margin-right:10px;font-size:28px;color:#757575"></i>
+                            <i ng-show="!Blocked && openChat.GroupId==''"  ng-click="block_contact(openChat)" class="fa fa-lock" style="float:right;margin-top:-3px ;margin-right:10px;font-size:28px;color:#757575"></i>
+                            <img ng-show="openChat.Flag" ng-src="{{openChat.GroupImage}}" style="width:30px; height:30px;float:left;margin-top:-5px ; border-radius: 50%;">
+                            <h3  ng-show="openChat.Flag" style=" margin-left:50px !important;">{{openChat.GroupName}}</h3>
+                            <img ng-show="!openChat.Flag" ng-src="{{openChat.ContactList[0].ContactImage}}" style="width:30px; height:30px;float:left;margin-top:-5px ; border-radius: 50%;">
+                            <h3  ng-show="!openChat.Flag" style=" margin-left:50px !important;">{{openChat.ContactList[0].ContactName}}</h3>
+                        </header>
+                        <div class="col-md-12" style="height:500px;border: 2px solid gainsboro;">
+                            <div style="overflow-y:scroll;overflow-x:hidden; height: 425px;">
+                                    <table>
+                                        <tr ng-repeat="msg in MessageCopyList" >
+                                            <td  ng-show="msg.Self" style="width:718px">
+                                                <div style="margin-left:200px;width:470px">
+                                                    <p class="w3-panel w3-card-4"
+                                                    style=" margin: 5px;
+                                                    padding: 5px;
+                                                    float:right;
+                                                    display: inline-block;
+                                                    word-break: break-all;">{{msg.MessageBody}}</p>
+                                                </div>
+                                            </td>
+                                            <td  ng-show="!msg.Self" style="width:718px">
+                                                <!-- <h6>msg.Sender</h6> -->
+                                                <div style="width:470px" >
+                                                    <p class="w3-panel w3-card-4"
+                                                    style="margin: 5px;
+                                                    padding: 5px;
+                                                    display: inline-block;
+                                                    
+                                                    word-break: break-all;">{{msg.MessageBody}}</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                            </div>
+                            <div ng-show="!Blocked && openChat.GroupId==''" style="margin-top: 15px;">
+                                <button ng-click="send_message(openChat)" type="button" class="btn btn-default" style="float:right;margin-top:7px;background: #4CAF50;color: white" value="Go">Go</button>
+                                <textarea ng-model="message" rows="2" cols="70" ></textarea>
+                            </div>
+                            <div  ng-show="Blocked && openChat.GroupId==''" class="alert alert-success" style="margin-top: 15px;">
+                                <center><strong>Unblock to send a message !</strong></center>
+                            </div>
+                            <div ng-show="openChat.GroupId!=''" style="margin-top: 15px;">
+                                    <button ng-click="send_message(openChat)" type="button" class="btn btn-default" style="float:right;margin-top:7px;background: #4CAF50;color: white" value="Go">Go</button>
+                                    <textarea ng-model="message" rows="2" cols="70" ></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div ng-show="open_group_data" class="col-md-8" style=" border-left: 1px solid white;"> 
+                            <header>
+                                <i class="fa fa-window-close" ng-click="close_group()" style="float:right;margin-top:-3px ;margin-right:10px;font-size:28px;color:#757575"></i>
+                                <img ng-show="openChat.Flag" ng-src="{{openChat.GroupImage}}" style="width:30px; height:30px;float:left;margin-top:-5px ; border-radius: 50%;">
+                                <h3  ng-show="openChat.Flag" style=" margin-left:50px !important;">{{openChat.GroupName}}</h3>
+                            </header>
+                            <div class="col-md-12" style="height:500px;border: 2px solid gainsboro;">
+                                    <table>
+                                            <tr ng-repeat="item in openChat.ContactList">
+                                                    <td style="width: 90px;"><img ng-src="{{item.ContactImage}}" height="50" width="50" style="border-radius: 50%;"></td>
+                                                    <td style="width:460px;font-size: 20;font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;">{{item.ContactName}}</td
+                                            </tr>
+                                        </table>
+                            </div>
+                    </div>
+                    
+                
+                        <!-- <div ng-show="open_group_data" class="col-md-8" style="border-left: 1px solid white;"> 
+                                <header>
+                                    <img style="width:30px; height:30px;float:left;margin-top:-5px ; border-radius: 50%;">
+                                    <h3 style=" margin-left:50px !important;">{{openChat.ContactName}}</h3>
+                                </header>
+                                <div class="col-md-12" style="height:500px;border: 2px solid gainsboro;">
+                                        <tr ng-repeat="groupMember in list">
+                                                <td style="width: 90px;"><img  height="50" width="50" style="border-radius: 50%;"></td>
+                                                <td style="width:460px;font-size: 20;font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;"></td>
+                                                <td style="width: 30px;">
+                                                    <md-select ng-model="selectedName" ng-options="x for x in names"></md-select>
+                                        
+                                                </td>
+                                            </tr>
+                                </div>
+                            </div> -->
+                    
+              </div>
+              
+              <!-- open modal -->
+              <div class="modal fade" id="modalwindow" role="dialog">
+                    <div class="modal-dialog modal-sm">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal">&times;</button>
+                          <h4 class="modal-title"><center>Create New Contact</center></h4>
+                        </div>
+                        <div class="modal-body">
+                           <center>Email : <input type="text" ng-model="contactEmail" ></input></center><br>
+                           <center> Name : <input type="text" ng-model="contactName"></input></center>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" style="background: #4CAF50;color: white" class="btn btn-default" ng-click="add_contact()">Add</button>
+                            <button type="button" style="background: #757575;color: white"class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+          </div>
+          <center><div class="bottom_div">
+                <i ng-click="set_div()"
+                class="fa fa-long-arrow-left" style="margin-top:5px;margin-left:20px;float:left;font-size:32px;color:white"></i>
+          </div></center>
+      </body>
+  
+</html>
